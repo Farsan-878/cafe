@@ -1,168 +1,44 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cafe Management System</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
-</head>
-<body>
-    <div class="page-shell">
-        <header class="hero">
-            <div>
-                <p class="eyebrow">Cafe Management System</p>
-                <h1>Run the cafe from one clean dashboard.</h1>
-                <p class="hero-copy">
-                    Manage the menu, place orders, assign service boys, track inventory, and collect customer reviews.
-                </p>
-            </div>
-            <div class="hero-card">
-                <h2>Live API Status</h2>
-                <p>Backend: Flask + Flask-CORS</p>
-                <p>Data: In-memory today, easy to move to SQLite later</p>
-            </div>
-        </header>
+{% extends "base.html" %}
 
-        <main class="dashboard-grid">
-            <!-- Menu display and inventory -->
-            <section class="panel wide-panel">
-                <div class="panel-heading">
-                    <div>
-                        <p class="section-label">Menu display</p>
-                        <h2>Available menu items</h2>
-                    </div>
-                    <button class="ghost-button" id="refreshMenuBtn" type="button">Refresh</button>
-                </div>
-                <div id="menuList" class="card-grid"></div>
-                <div class="subpanel">
-                    <div class="panel-heading compact">
-                        <div>
-                            <p class="section-label">Inventory</p>
-                            <h3>Current stock</h3>
-                        </div>
-                    </div>
-                    <div id="inventoryList" class="list-stack"></div>
-                </div>
-            </section>
+{% block title %}Home - Cafe Management{% endblock %}
 
-            <!-- Add menu item -->
-            <section class="panel">
-                <div class="panel-heading">
-                    <div>
-                        <p class="section-label">Add menu item</p>
-                        <h2>New item</h2>
-                    </div>
-                </div>
-                <form id="menuForm" class="form-stack">
-                    <label>
-                        Item name
-                        <input type="text" name="name" placeholder="Paneer wrap" required />
-                    </label>
-                    <label>
-                        Price
-                        <input type="number" name="price" min="0" step="0.01" placeholder="140" required />
-                    </label>
-                    <label>
-                        Quantity
-                        <input type="number" name="quantity" min="0" step="1" value="10" required />
-                    </label>
-                    <label class="checkbox-row">
-                        <input type="checkbox" name="available" checked />
-                        Available
-                    </label>
-                    <button class="primary-button" type="submit">Add Item</button>
-                    <p class="message" id="menuMessage"></p>
-                </form>
-            </section>
-
-            <!-- Place order -->
-            <section class="panel wide-panel">
-                <div class="panel-heading">
-                    <div>
-                        <p class="section-label">Place order</p>
-                        <h2>Create a bill</h2>
-                    </div>
-                    <button class="ghost-button" id="addOrderRowBtn" type="button">Add Item Row</button>
-                </div>
-                <form id="orderForm" class="form-stack">
-                    <label>
-                        Service boy
-                        <select id="serviceBoySelect" name="service_boy_name" required></select>
-                    </label>
-                    <div id="orderItems" class="order-items"></div>
-                    <button class="primary-button" type="submit">Place Order</button>
-                    <p class="message success-message" id="orderMessage"></p>
-                </form>
-            </section>
-
-            <!-- Add staff -->
-            <section class="panel">
-                <div class="panel-heading">
-                    <div>
-                        <p class="section-label">Add staff</p>
-                        <h2>Service boy</h2>
-                    </div>
-                </div>
-                <form id="staffForm" class="form-stack">
-                    <label>
-                        Staff name
-                        <input type="text" name="name" placeholder="Rahul" required />
-                    </label>
-                    <button class="primary-button" type="submit">Add Staff</button>
-                    <p class="message" id="staffMessage"></p>
-                </form>
-            </section>
-
-            <!-- Add review -->
-            <section class="panel">
-                <div class="panel-heading">
-                    <div>
-                        <p class="section-label">Add review</p>
-                        <h2>Customer feedback</h2>
-                    </div>
-                </div>
-                <form id="reviewForm" class="form-stack">
-                    <label>
-                        Rating
-                        <select name="rating" required>
-                            <option value="5">5 - Excellent</option>
-                            <option value="4">4 - Good</option>
-                            <option value="3">3 - Average</option>
-                            <option value="2">2 - Fair</option>
-                            <option value="1">1 - Poor</option>
-                        </select>
-                    </label>
-                    <label>
-                        Comment
-                        <textarea name="comment" rows="4" placeholder="Write your review here" required></textarea>
-                    </label>
-                    <button class="primary-button" type="submit">Submit Review</button>
-                    <p class="message" id="reviewMessage"></p>
-                </form>
-            </section>
-
-            <!-- Show reviews -->
-            <section class="panel wide-panel">
-                <div class="panel-heading">
-                    <div>
-                        <p class="section-label">Show reviews</p>
-                        <h2>What customers said</h2>
-                    </div>
-                    <button class="ghost-button" id="refreshReviewsBtn" type="button">Refresh</button>
-                </div>
-                <div id="reviewList" class="list-stack"></div>
-            </section>
-        </main>
+{% block content %}
+<section class="items-section">
+    <div class="section-header">
+        <h2>Menu Items</h2>
+        <p class="section-description">Manage your cafe menu items</p>
     </div>
 
-    <template id="orderRowTemplate">
-        <div class="order-row">
-            <select class="order-menu-select" required></select>
-            <input class="order-quantity-input" type="number" min="1" step="1" value="1" required />
-            <button class="icon-button remove-row-button" type="button">Remove</button>
+    {% if items %}
+        <div class="table-wrapper">
+            <table class="items-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Item Name</th>
+                        <th>Price</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                        <tr>
+                            <td>{{ item.id }}</td>
+                            <td>{{ item.name }}</td>
+                            <td class="price">₹{{ item.price }}</td>
+                            <td class="actions">
+                                <a href="{{ url_for('edit_item', item_id=item.id) }}" class="btn btn-edit">Edit</a>
+                                <a href="{{ url_for('delete_item', item_id=item.id) }}" class="btn btn-delete" onclick="return confirm('Are you sure?')">Delete</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
-    </template>
-
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
-</body>
-</html>
+    {% else %}
+        <div class="empty-state">
+            <p>No items found. <a href="{{ url_for('add_item') }}">Add your first item</a></p>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

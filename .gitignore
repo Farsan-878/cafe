@@ -1,0 +1,17 @@
+node_modules/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.DS_Store
+.env
+.env.local
+.env.*.local
+cafe.db
+*.db
+.vscode/
+*.swp
+*.swo
+*~
+dist/
+build/

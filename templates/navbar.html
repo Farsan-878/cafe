@@ -1,0 +1,44 @@
+<nav class="navbar">
+    <div class="navbar-container">
+        <div class="navbar-brand">
+            <a href="{{ url_for('index') }}" class="navbar-logo">
+                <span class="logo-icon">☕</span>
+                <span class="logo-text">Cafe Manager</span>
+            </a>
+        </div>
+
+        <button class="navbar-toggle" id="navbarToggle" type="button">
+            <span class="toggle-line"></span>
+            <span class="toggle-line"></span>
+            <span class="toggle-line"></span>
+        </button>
+
+        <ul class="navbar-menu" id="navbarMenu">
+            <li class="nav-item">
+                <a href="{{ url_for('index') }}" class="nav-link {% if request.endpoint == 'index' %}active{% endif %}">
+                    <span class="nav-icon">🏠</span>
+                    <span>Home</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('add_item') }}" class="nav-link btn-primary {% if request.endpoint == 'add_item' %}active{% endif %}">
+                    <span class="nav-icon">➕</span>
+                    <span>Add Item</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="navbar-info">
+            <span class="status-badge online">● Online</span>
+        </div>
+    </div>
+</nav>
+
+<script>
+document.getElementById('navbarToggle')?.addEventListener('click', function() {
+    const menu = document.getElementById('navbarMenu');
+    menu.classList.toggle('active');
+    this.classList.toggle('active');
+});
+</script>
+
