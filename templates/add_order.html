@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}Create Order - Cafe Management{% endblock %}
+
+{% block content %}
+<section class="form-section">
+    <div class="form-container">
+        <h2>Create New Order</h2>
+        <form method="POST" class="item-form" id="orderForm">
+            <div class="form-group">
+                <label for="table_number">Table Number (Optional)</label>
+                <input type="number" id="table_number" name="table_number" placeholder="Enter table number" min="1">
+            </div>
+
+            <div class="form-group">
+                <label for="service_boy_id">Service Boy (Optional)</label>
+                <select id="service_boy_id" name="service_boy_id">
+                    <option value="">--Select--</option>
+                    {% for s in staff %}
+                        {% if s.position == 'Service Boy' %}
+                            <option value="{{ s.id }}">{{ s.name }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div style="background: rgba(245, 232, 221, 0.5); border-radius: 12px; padding: 20px; margin-top: 20px;">
+                <h3 style="margin-top: 0;">Select Items</h3>
+                <div id="itemsContainer">
+                    <div class="order-item-row">
+                        <div class="form-group" style="margin: 0;">
+                            <label for="item_id_0">Item</label>
+                            <select name="item_id" class="item-select">
+                                <option value="">--Select Item--</option>
+                                {% for item in items %}
+                                    <option value="{{ item.id }}" data-price="{{ item.price }}">{{ item.name }} (₹{{ item.price }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label for="quantity_0">Quantity</label>
+                            <input type="number" name="quantity" class="quantity-input" placeholder="Qty" min="1" value="1">
+                        </div>
+                        <button type="button" class="btn btn-delete" onclick="removeItem(this);" style="margin-top: 20px;">Remove</button>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-secondary" onclick="addItem();" style="margin-top: 12px;">+ Add Item</button>
+            </div>
+
+            <div class="form-actions" style="margin-top: 24px;">
+                <button type="submit" class="btn btn-primary">Create Order</button>
+                <a href="{{ url_for('orders_list') }}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</section>
+
+<style>
+.order-item-row {
+    display: grid;
+    grid-template-columns: 1fr 100px 100px;
+    gap: 12px;
+    margin-bottom: 12px;
+    align-items: flex-end;
+}
+
+.form-group {
+    display: grid;
+    gap: 8px;
+}
+
+.form-group label {
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.form-group select,
+.quantity-input {
+    padding: 10px;
+    border: 2px solid rgba(77, 50, 28, 0.18);
+    border-radius: 8px;
+    font: inherit;
+    width: 100%;
+}
+
+@media (max-width: 768px) {
+    .order-item-row {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<script>
+function addItem() {
+    const container = document.getElementById('itemsContainer');
+    const rowCount = container.children.length;
+
+    const newRow = document.createElement('div');
+    newRow.className = 'order-item-row';
+    newRow.innerHTML = `
+        <div class="form-group" style="margin: 0;">
+            <label>Item</label>
+            <select name="item_id" class="item-select">
+                <option value="">--Select Item--</option>
+                {% for item in items %}
+                    <option value="{{ item.id }}" data-price="{{ item.price }}">{{ item.name }} (₹{{ item.price }})</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group" style="margin: 0;">
+            <label>Quantity</label>
+            <input type="number" name="quantity" class="quantity-input" placeholder="Qty" min="1" value="1">
+        </div>
+        <button type="button" class="btn btn-delete" onclick="removeItem(this);">Remove</button>
+    `;
+    container.appendChild(newRow);
+}
+
+function removeItem(btn) {
+    const container = document.getElementById('itemsContainer');
+    if (container.children.length > 1) {
+        btn.parentElement.remove();
+    } else {
+        alert('You must have at least one item in the order');
+    }
+}
+
+document.getElementById('orderForm').addEventListener('submit', function(e) {
+    const items = document.querySelectorAll('select[name="item_id"]');
+    let hasItems = false;
+
+    items.forEach(item => {
+        if (item.value) hasItems = true;
+    });
+
+    if (!hasItems) {
+        e.preventDefault();
+        alert('Please select at least one item');
+    }
+});
+</script>
+{% endblock %}

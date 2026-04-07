@@ -3,6 +3,27 @@
 {% block title %}Home - Cafe Management{% endblock %}
 
 {% block content %}
+<!-- Hero Section -->
+<section class="hero-welcome">
+    <div class="hero-content">
+        <h1>☕ Welcome to Your Cafe</h1>
+        <p class="hero-subtitle">Manage your menu items with ease. Add, edit, and organize your cafe offerings.</p>
+        <a href="{{ url_for('add_item') }}" class="btn btn-primary hero-cta">
+            <svg width="20" height="20" viewBox="0 0 24 24">
+                <path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+            </svg>
+            Add New Item
+        </a>
+    </div>
+    <div class="hero-stats">
+        <div class="stat-card">
+            <span class="stat-number">{{ items|length }}</span>
+            <span class="stat-label">Total Items</span>
+        </div>
+    </div>
+</section>
+
+<!-- Menu Items Section -->
 <section class="items-section">
     <div class="section-header">
         <h2>Menu Items</h2>
@@ -10,30 +31,36 @@
     </div>
 
     {% if items %}
-        <div class="table-wrapper">
-            <table class="items-table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Item Name</th>
-                        <th>Price</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for item in items %}
-                        <tr>
-                            <td>{{ item.id }}</td>
-                            <td>{{ item.name }}</td>
-                            <td class="price">₹{{ item.price }}</td>
-                            <td class="actions">
-                                <a href="{{ url_for('edit_item', item_id=item.id) }}" class="btn btn-edit">Edit</a>
-                                <a href="{{ url_for('delete_item', item_id=item.id) }}" class="btn btn-delete" onclick="return confirm('Are you sure?')">Delete</a>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <!-- Enhanced Card Grid View -->
+        <div class="items-grid">
+            {% for item in items %}
+                <div class="menu-card-enhanced">
+                    <div class="card-header">
+                        <h3>{{ item.name }}</h3>
+                        <span class="badge badge-new">New</span>
+                    </div>
+
+                    <div class="card-body">
+                        <p class="card-description">Menu item</p>
+                        <div class="card-price">₹{{ item.price }}</div>
+                    </div>
+
+                    <div class="card-footer">
+                        <a href="{{ url_for('edit_item', item_id=item.id) }}" class="btn btn-edit btn-sm">
+                            <svg width="16" height="16" viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z"/>
+                            </svg>
+                            Edit
+                        </a>
+                        <a href="{{ url_for('delete_item', item_id=item.id) }}" class="btn btn-delete btn-sm" onclick="return confirm('Are you sure?')">
+                            <svg width="16" height="16" viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-9l-1 1H5v2h14V4z"/>
+                            </svg>
+                            Delete
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
         </div>
     {% else %}
         <div class="empty-state">
